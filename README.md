@@ -11,6 +11,7 @@ Resume Booster is a simple web app for job seekers who don't want to spend hours
 1. **Input** — Paste resume + job description + industry, hit submit
 2. **Result** — View the AI-rewritten resume, copy to clipboard
 3. **History** — Browse past resume + job pairs and their outputs
+4. **Login** - Enter email or Google to login into the application and access your saved history 
 
 ## AI Feature
 
