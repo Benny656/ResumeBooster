@@ -133,82 +133,105 @@ export default function Home() {
 
   return (
     <>
-      <nav className="navbar">
-        <Link href="/" style={{ textDecoration: "none" }}>
-          <span className="navbar-logo" style={{ cursor: "pointer" }}>Resume Booster</span>
+      <nav className="w-full flex items-center justify-between h-[60px] px-6 bg-[#E63946]">
+        <Link href="/" className="no-underline">
+          <span className="text-xl font-bold text-[#FDF6EC] cursor-pointer">Resume Booster</span>
         </Link>
-        <div className="navbar-right">
+        <div className="flex items-center">
           {user ? (
-            <Link href="/history" className="navbar-link">
+            <Link href="/history" className="text-[#FDF6EC] no-underline font-medium text-base hover:text-white transition-colors cursor-pointer">
               History
             </Link>
           ) : (
-            <Link href="/login" className="navbar-link">
+            <Link href="/login" className="text-[#FDF6EC] no-underline font-medium text-base hover:text-white transition-colors cursor-pointer">
               Login
             </Link>
           )}
         </div>
       </nav>
 
-      <main className="main-container">
+      <main className="flex flex-col items-center pt-12 px-4 pb-12 w-full max-w-full">
         {!showResult ? (
           <>
-            <div className="header-section">
-              <h1 className="page-title">Resume Booster</h1>
-              <p className="page-subtext">
-                Paste your resume and a job description. Get a rewritten, job-ready resume instantly.
+            <div className="text-center mb-10 mt-4">
+              <h1 className="text-5xl md:text-6xl font-bold text-[#1a1a1a] mb-3 tracking-tight">Resume Booster</h1>
+              <p className="text-[#1a1a1a] opacity-80 text-lg md:text-xl max-w-2xl mx-auto">
+                Paste your resume and a job description to get a rewritten, job-ready resume instantly.
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="form-container">
-              <div className="form-group">
-                <span className="form-label">Upload Resume</span>
-                <div className="file-upload-wrapper">
-                  <div className={`file-upload-button ${resumeFile ? "file-selected" : ""}`}>
-                    <span>{resumeFile ? resumeFile.name : "Choose .pdf or .txt file"}</span>
-                    <span style={{ fontSize: "0.85rem", opacity: 0.6 }}>Browse</span>
+            <form onSubmit={handleSubmit} className="w-full max-w-[800px] mx-auto flex flex-col gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-stretch">
+                {/* Left Column (Upload Box) */}
+                <div className="flex items-center justify-center w-full">
+                  <div className={`relative flex flex-col items-center justify-center w-full max-w-[340px] aspect-square border-2 border-dashed border-[#E63946] rounded-2xl bg-transparent p-6 text-center cursor-pointer transition-colors ${resumeFile ? 'bg-[#E63946]/5' : 'hover:bg-[#E63946]/5'}`}>
+                    <input
+                      type="file"
+                      accept=".pdf,.txt"
+                      onChange={handleFileChange}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      id="resume-upload"
+                      required
+                    />
+                    <div className="flex flex-col items-center justify-center">
+                      <svg className="w-12 h-12 text-[#E63946] mb-3" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                      </svg>
+                      <span className="text-[#1a1a1a] font-medium text-base max-w-[200px] break-words">
+                        {resumeFile ? resumeFile.name : "Upload Resume (.pdf or .txt)"}
+                      </span>
+                    </div>
                   </div>
-                  <input
-                    type="file"
-                    accept=".pdf,.txt"
-                    onChange={handleFileChange}
-                    className="file-upload-input"
-                    id="resume-upload"
-                    required
-                  />
+                </div>
+
+                {/* Right Column (Input Card) */}
+                <div 
+                  className="flex flex-col gap-5 justify-center shadow-sm"
+                  style={{
+                    background: "rgba(255,255,255,0.3)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    border: "1px solid rgba(255,255,255,0.5)",
+                    borderRadius: "16px",
+                    padding: "24px"
+                  }}
+                >
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="job-description" className="text-[#1a1a1a] font-semibold text-sm">
+                      Job Description
+                    </label>
+                    <textarea
+                      id="job-description"
+                      className="w-full h-32 p-3 rounded-lg border border-white/50 bg-white/20 text-[#1a1a1a] placeholder:text-[#1a1a1a]/50 focus:outline-none focus:ring-1 focus:ring-[#E63946] resize-none"
+                      placeholder="Paste the job description here"
+                      value={jobDescription}
+                      onChange={(e) => setJobDescription(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="industry" className="text-[#1a1a1a] font-semibold text-sm">
+                      Industry
+                    </label>
+                    <input
+                      id="industry"
+                      type="text"
+                      className="w-full p-3 rounded-lg border border-white/50 bg-white/20 text-[#1a1a1a] placeholder:text-[#1a1a1a]/50 focus:outline-none focus:ring-1 focus:ring-[#E63946]"
+                      placeholder="e.g. Software, Marketing"
+                      value={industry}
+                      onChange={(e) => setIndustry(e.target.value)}
+                      required
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="job-description" className="form-label">
-                  Job Description
-                </label>
-                <textarea
-                  id="job-description"
-                  className="input-textarea"
-                  placeholder="Paste the job description here"
-                  value={jobDescription}
-                  onChange={(e) => setJobDescription(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="industry" className="form-label">
-                  Industry
-                </label>
-                <input
-                  id="industry"
-                  type="text"
-                  className="input-text"
-                  placeholder="e.g. Software, Marketing"
-                  value={industry}
-                  onChange={(e) => setIndustry(e.target.value)}
-                  required
-                />
-              </div>
-
-              <button type="submit" className="btn-submit" disabled={isSubmitting}>
+              <button 
+                type="submit" 
+                className="w-full py-4 px-6 rounded-full bg-[#E63946] text-white font-bold text-lg hover:bg-[#d62839] active:bg-[#b51a2b] transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed" 
+                disabled={isSubmitting}
+              >
                 {isSubmitting ? "Rewriting..." : "Rewrite My Resume"}
               </button>
             </form>
