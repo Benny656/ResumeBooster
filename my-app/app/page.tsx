@@ -2,6 +2,32 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.04,
+    },
+  },
+};
+
+const wordVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.215, 0.61, 0.355, 1] as const, // easeOutCubic
+    },
+  },
+};
+
+const titleWords = "Resume Booster".split(" ");
+const descWords = "Paste your resume and a job description to get a rewritten, job-ready resume instantly.".split(" ");
 
 interface User {
   name: string;
@@ -17,6 +43,7 @@ export default function Home() {
   const [rewrittenResume, setRewrittenResume] = useState("");
   const [showResult, setShowResult] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [animKey, setAnimKey] = useState(0);
 
   // Check login state on mount
   useEffect(() => {
@@ -153,12 +180,37 @@ export default function Home() {
       <main className="flex flex-col items-center pt-12 px-4 pb-12 w-full max-w-full">
         {!showResult ? (
           <>
-            <div className="text-center mb-10 mt-4">
-              <h1 className="text-5xl md:text-6xl font-bold text-[#1a1a1a] mb-3 tracking-tight">Resume Booster</h1>
-              <p className="text-[#1a1a1a] opacity-80 text-lg md:text-xl max-w-2xl mx-auto">
-                Paste your resume and a job description to get a rewritten, job-ready resume instantly.
+            <motion.div 
+              key={animKey}
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              onClick={() => setAnimKey(prev => prev + 1)}
+              className="text-center mb-10 mt-4 cursor-pointer select-none"
+            >
+              <h1 className="text-5xl md:text-6xl font-bold text-[#1a1a1a] mb-3 tracking-tight flex flex-wrap justify-center gap-x-3 gap-y-1">
+                {titleWords.map((word, index) => (
+                  <motion.span 
+                    key={index} 
+                    variants={wordVariants}
+                    className="inline-block"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </h1>
+              <p className="text-[#1a1a1a] opacity-80 text-lg md:text-xl max-w-2xl mx-auto flex flex-wrap justify-center gap-x-2 gap-y-1 mt-4">
+                {descWords.map((word, index) => (
+                  <motion.span 
+                    key={index} 
+                    variants={wordVariants}
+                    className="inline-block"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
               </p>
-            </div>
+            </motion.div>
 
             <form onSubmit={handleSubmit} className="w-full max-w-[800px] mx-auto flex flex-col gap-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-stretch">
