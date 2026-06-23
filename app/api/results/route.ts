@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, resumeText, jobDescription, industry, rewrittenOutput } = body;
 
-    if (!rewrittenOutput) {
+    if (rewrittenOutput === undefined) {
       return Response.json(
         { error: 'rewrittenOutput is required' },
         { status: 400 }
