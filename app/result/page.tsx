@@ -7,7 +7,7 @@ export default function ResultPage() {
   const router = useRouter();
   const [rewrittenResume, setRewrittenResume] = useState("");
   const [copied, setCopied] = useState(false);
-  const [user, setUser] = useState<{name: string, email: string} | null>(null);
+  const [user, setUser] = useState<{ name: string, email: string } | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -22,9 +22,6 @@ export default function ResultPage() {
     const savedResume = sessionStorage.getItem("rb_rewrittenResume");
     if (savedResume) {
       setRewrittenResume(savedResume);
-    } else {
-      // If no resume in session, redirect back to home
-      router.push("/");
     }
 
     // Check if we need to trigger download after login
