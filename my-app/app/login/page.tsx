@@ -67,23 +67,6 @@ export default function LoginPage() {
 
   return (
     <>
-      <nav className="navbar">
-        <Link href="/" style={{ textDecoration: "none" }}>
-          <span className="navbar-logo" style={{ cursor: "pointer" }}>Resume Booster</span>
-        </Link>
-        <div className="navbar-right">
-          {user ? (
-            <Link href="/history" className="navbar-link">
-              History
-            </Link>
-          ) : (
-            <Link href="/login" className="navbar-link">
-              Login
-            </Link>
-          )}
-        </div>
-      </nav>
-
       <main className="main-container">
         <div className="form-container" style={{ maxWidth: "400px", marginTop: "2rem" }}>
           {!isSignUp ? (
