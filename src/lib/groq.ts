@@ -29,7 +29,7 @@ export default groqClient;
 // ─── Model constants ───────────────────────────────────────────────────────────
 
 /** Default model used for resume analysis. Swap here to change globally. */
-export const GROQ_MODEL = "llama-3.3-70b-versatile" as const;
+export const GROQ_MODEL = "openai/gpt-oss-120b" as const;
 
 /** Maximum tokens allocated for the analysis response. */
 export const GROQ_MAX_TOKENS = 4096 as const;

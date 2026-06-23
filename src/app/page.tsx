@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, CheckCircle2, Sparkles, FileText, Target, Zap, RotateCcw, Clock } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Sparkles, FileText, Target, Zap, RotateCcw, Clock, Download } from 'lucide-react';
 import Link from 'next/link';
 import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
 
@@ -52,43 +52,94 @@ export default function Landing() {
                 See How It Works
               </a>
             </div>
-            
-            <div className="flex items-center gap-4 pt-4 text-sm font-medium opacity-60">
-              <div className="flex -space-x-2">
-                {[1,2,3,4].map(i => (
-                  <div key={i} className="w-8 h-8 rounded-full border-2 border-[var(--color-brand-cream)] bg-black/10 flex items-center justify-center overflow-hidden">
-                    <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User avatar" className="w-full h-full object-cover" />
-                  </div>
-                ))}
-              </div>
-              <span>Trusted by 10,000+ job seekers</span>
-            </div>
+
           </div>
           
           <motion.div 
-            initial={{ opacity: 0, x: 50, rotate: 5 }}
-            animate={{ opacity: 1, x: 0, rotate: 0 }}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="relative"
+            className="relative h-[500px] md:h-[600px] w-full flex items-center justify-center perspective-[1000px]"
           >
             <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-brand-red)] to-orange-400 rounded-3xl blur-[100px] opacity-20 transform scale-90"></div>
-            <div className="glass-card p-4 rounded-3xl relative overflow-hidden aspect-[4/5] shadow-2xl">
-               {/* Note: This Unsplash image represents a modern minimal resume */}
-              <ImageWithFallback 
-                src="https://images.unsplash.com/photo-1693045181178-d5d83fb070c8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBjbGVhbiUyMHJlc3VtZSUyMHBhcGVyJTIwbWluaW1hbHxlbnwxfHx8fDE3ODIyMjg0ODF8MA&ixlib=rb-4.1.0&q=80&w=1080" 
-                alt="Resume optimization illustration" 
-                className="w-full h-full object-cover rounded-2xl opacity-90 mix-blend-multiply filter contrast-125 grayscale"
-              />
-              <div className="absolute top-8 -left-8 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-4 animate-[bounce_4s_infinite]">
-                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                  <Target size={24} />
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-gray-400">Match Score</div>
-                  <div className="text-2xl font-heading font-bold text-green-600">94%</div>
-                </div>
-              </div>
+            
+            {/* Resumes Fanned Out */}
+            <div className="absolute inset-0 flex items-center justify-center z-10" style={{ transform: 'rotate(-15deg) translateX(-60px) translateY(20px)' }}>
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="w-[80%] max-w-[340px] aspect-[1/1.4] rounded-2xl shadow-2xl border border-white/20 overflow-hidden"
+              >
+                <img src="/rem1.jpg" alt="Resume 1" className="w-full h-full object-cover" />
+              </motion.div>
             </div>
+
+            <div className="absolute inset-0 flex items-center justify-center z-20" style={{ transform: 'translateZ(20px)' }}>
+              <motion.div
+                animate={{ y: [0, -15, 0] }}
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                className="w-[80%] max-w-[340px] aspect-[1/1.4] rounded-2xl shadow-2xl border border-white/20 overflow-hidden"
+              >
+                <img src="/rem2.jpg" alt="Resume 2" className="w-full h-full object-cover" />
+              </motion.div>
+            </div>
+
+            <div className="absolute inset-0 flex items-center justify-center z-30" style={{ transform: 'rotate(15deg) translateX(60px) translateY(10px)' }}>
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="w-[80%] max-w-[340px] aspect-[1/1.4] rounded-2xl shadow-2xl border border-white/20 overflow-hidden"
+              >
+                <img src="/rem3.jpg" alt="Resume 3" className="w-full h-full object-cover" />
+              </motion.div>
+            </div>
+
+            {/* Badges */}
+            <motion.div 
+              animate={{ y: -12 }}
+              transition={{ duration: 4, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
+              style={{ willChange: 'transform' }}
+              className="absolute top-10 -left-4 md:-left-12 z-40 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-4"
+            >
+              <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                <Target size={24} />
+              </div>
+              <div>
+                <div className="text-sm font-bold text-gray-400">Match Score</div>
+                <div className="text-2xl font-heading font-bold text-green-600">94%</div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              animate={{ y: 15 }}
+              transition={{ duration: 5, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: 1 }}
+              style={{ willChange: 'transform' }}
+              className="absolute bottom-20 -right-4 md:-right-12 z-40 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-4"
+            >
+              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                <Sparkles size={24} />
+              </div>
+              <div>
+                <div className="text-sm font-bold text-gray-400">AI Analysis</div>
+                <div className="text-lg font-heading font-bold text-blue-600">12 Suggestions</div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              animate={{ y: -10 }}
+              transition={{ duration: 4.5, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: 2 }}
+              style={{ willChange: 'transform' }}
+              className="absolute top-48 -right-8 md:-right-16 z-40 bg-[var(--color-brand-black)] p-4 rounded-2xl shadow-xl flex items-center gap-4"
+            >
+              <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white">
+                <Download size={24} />
+              </div>
+              <div>
+                <div className="text-sm font-bold text-white/60">Ready to</div>
+                <div className="text-lg font-heading font-bold text-white">Download PDF</div>
+              </div>
+            </motion.div>
+
           </motion.div>
         </div>
       </section>
