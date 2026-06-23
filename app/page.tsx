@@ -43,28 +43,58 @@ export default function Home() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate AI rewriting process
-    setTimeout(() => {
-      setIsSubmitting(false);
-      const result = `[REWRITTEN RESUME - ${industry.toUpperCase() || "GENERAL"} INDUSTRY]\n\n` +
-        `SUMMARY\n` +
-        `Highly motivated professional with experience tailored for the requested role. Skilled in aligning key methodologies with industry requirements, optimizing project deliverables, and collaborating across cross-functional teams.\n\n` +
-        `PROFESSIONAL EXPERIENCE\n` +
-        `- Successfully implemented strategic initiatives matching the target job description.\n` +
-        `- Optimized workflows, leading to measurable efficiency improvements.\n` +
-        `- Translated business goals into actionable development paths.\n\n` +
-        `Job Description match score: 98%\n` +
-        `Keywords optimized: Analysis, Execution, Industry Best Practices.`;
+    try {
+      let resumeText = "";
+      if (resumeFile) {
+        resumeText = await resumeFile.text();
+      }
+
+      let email = "";
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        try {
+          const userObj = JSON.parse(storedUser);
+          email = userObj.email || "";
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      const payload = {
+        email,
+        resumeText,
+        jobDescription,
+        industry,
+        rewrittenOutput: ""
+      };
+
+      const res = await fetch("/api/results", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to save result");
+      }
+
+      const data = await res.json();
       
-      sessionStorage.setItem("rb_rewrittenResume", result);
+      // Keep in session storage for the result page for now
+      sessionStorage.setItem("rb_rewrittenResume", payload.rewrittenOutput);
       sessionStorage.setItem("rb_jobDescription", jobDescription);
       sessionStorage.setItem("rb_industry", industry);
       router.push("/result");
-    }, 1200);
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

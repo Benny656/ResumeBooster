@@ -8,76 +8,62 @@ interface User {
   email: string;
 }
 
-interface HistoryItem {
-  id: string;
-  jobTitle: string;
+interface ApiResult {
+  _id: string;
+  jobDescription: string;
   industry: string;
-  date: string;
-  rewrittenResume: string;
+  createdAt: string;
+  rewrittenOutput: string;
 }
-
-const mockHistoryData: HistoryItem[] = [
-  {
-    id: "1",
-    jobTitle: "Senior React Engineer",
-    industry: "Software Development",
-    date: "2026-06-22",
-    rewrittenResume: `[REWRITTEN RESUME - SOFTWARE DEVELOPMENT]
-
-SUMMARY
-Highly motivated React Engineer with extensive experience building fast, modular client-side interfaces. Optimized performance for large-scale single-page apps.
-
-EXPERIENCE
-- Built 15+ complex React components using flat, modern styling methodologies.
-- Reduced initial paint times by 35% using Next.js compiler optimizations.
-
-Skills: React, JavaScript, HTML, Vanilla CSS, Next.js.`
-  },
-  {
-    id: "2",
-    jobTitle: "Growth Marketing Lead",
-    industry: "Marketing",
-    date: "2026-06-20",
-    rewrittenResume: `[REWRITTEN RESUME - MARKETING]
-
-SUMMARY
-Result-oriented Growth Marketing Lead. Proven track record of scaling consumer acquisition channels and implementing data-driven campaigns.
-
-EXPERIENCE
-- Optimized landing pages, improving conversion rates by 12%.
-- Managed monthly growth marketing pipelines across primary search and social channels.`
-  }
-];
 
 export default function HistoryPage() {
   const [user, setUser] = useState<User | null>(null);
-  const [historyItems, setHistoryItems] = useState<HistoryItem[]>([]);
+  const [historyItems, setHistoryItems] = useState<ApiResult[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Check login state and load history on mount
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) {
       try {
-        setUser(JSON.parse(stored));
-        // If logged in, show the mock history
-        setHistoryItems(mockHistoryData);
+        const parsedUser = JSON.parse(stored);
+        setUser(parsedUser);
+        
+        // Fetch real data
+        fetch(`/api/results?email=${encodeURIComponent(parsedUser.email || "")}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.results) {
+              setHistoryItems(data.results);
+            }
+            setLoading(false);
+          })
+          .catch(err => {
+            console.error("Failed to fetch history:", err);
+            setLoading(false);
+          });
       } catch (e) {
         console.error(e);
+        setLoading(false);
       }
     } else {
-      // If not logged in, history remains empty
+      setLoading(false);
       setHistoryItems([]);
     }
   }, []);
 
-  const handleViewResult = (item: HistoryItem) => {
-    // Save items to session storage to restore on homepage mount
-    sessionStorage.setItem("rb_jobDescription", `Mock Job Description for ${item.jobTitle}`);
+  const handleViewResult = (item: ApiResult) => {
+    sessionStorage.setItem("rb_jobDescription", item.jobDescription);
     sessionStorage.setItem("rb_industry", item.industry);
-    sessionStorage.setItem("rb_rewrittenResume", item.rewrittenResume);
+    sessionStorage.setItem("rb_rewrittenResume", item.rewrittenOutput);
     
-    // Redirect to home page
+    // Redirect to home page (or result page)
     window.location.href = "/";
+  };
+
+  const truncate = (text: string, length: number) => {
+    if (!text) return "";
+    return text.length > length ? text.substring(0, length) + "..." : text;
   };
 
   return (
@@ -88,15 +74,22 @@ export default function HistoryPage() {
             <h1 className="page-title">Your History</h1>
           </div>
 
-          {historyItems.length > 0 ? (
+          {loading ? (
+             <p className="page-subtext" style={{ textAlign: "center", marginTop: "2rem" }}>Loading...</p>
+          ) : historyItems.length > 0 ? (
             <div className="history-list">
               {historyItems.map((item) => (
-                <div key={item.id} className="history-item">
+                <div key={item._id} className="history-item">
                   <div className="history-info">
                     <span className="history-title">
-                      {item.jobTitle} • {item.industry}
+                      {item.industry || "General"}
                     </span>
-                    <span className="history-date">Submitted: {item.date}</span>
+                    <span className="history-date">
+                      Job: {truncate(item.jobDescription, 50)}
+                    </span>
+                    <span className="history-date">
+                      Date: {new Date(item.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                   <button
                     onClick={() => handleViewResult(item)}
