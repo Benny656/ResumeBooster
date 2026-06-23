@@ -7,31 +7,11 @@ export default function ResultPage() {
   const router = useRouter();
   const [rewrittenResume, setRewrittenResume] = useState("");
   const [copied, setCopied] = useState(false);
-  const [user, setUser] = useState<{ name: string, email: string } | null>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
     const savedResume = sessionStorage.getItem("rb_rewrittenResume");
     if (savedResume) {
       setRewrittenResume(savedResume);
-    }
-
-    // Check if we need to trigger download after login
-    if (sessionStorage.getItem("rb_triggerDownload") === "true") {
-      sessionStorage.removeItem("rb_triggerDownload");
-      if (storedUser) {
-        setTimeout(() => {
-          triggerPDFDownload(savedResume || "");
-        }, 500);
-      }
     }
   }, [router]);
 
@@ -54,19 +34,14 @@ export default function ResultPage() {
   };
 
   const handleDownloadPDF = () => {
-    if (!user) {
-      sessionStorage.setItem("rb_triggerDownload", "true");
-      router.push("/login");
-    } else {
-      triggerPDFDownload();
-    }
+    triggerPDFDownload();
   };
 
   const handleBackToInput = () => {
     router.push("/");
   };
 
-  if (!rewrittenResume) return null;
+  // Render the page even if rewrittenResume is empty for now
 
   return (
     <main className="flex flex-col items-center pt-12 px-4 pb-12 w-full max-w-full">

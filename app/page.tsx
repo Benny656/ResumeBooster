@@ -53,19 +53,8 @@ export default function Home() {
         resumeText = await resumeFile.text();
       }
 
-      let email = "";
-      const storedUser = localStorage.getItem("user");
-      if (storedUser) {
-        try {
-          const userObj = JSON.parse(storedUser);
-          email = userObj.email || "";
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
       const payload = {
-        email,
+        email: "",
         resumeText,
         jobDescription,
         industry,

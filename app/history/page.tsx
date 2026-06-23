@@ -17,39 +17,23 @@ interface ApiResult {
 }
 
 export default function HistoryPage() {
-  const [user, setUser] = useState<User | null>(null);
   const [historyItems, setHistoryItems] = useState<ApiResult[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Check login state and load history on mount
+  // Load all history on mount
   useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) {
-      try {
-        const parsedUser = JSON.parse(stored);
-        setUser(parsedUser);
-        
-        // Fetch real data
-        fetch(`/api/results?email=${encodeURIComponent(parsedUser.email || "")}`)
-          .then(res => res.json())
-          .then(data => {
-            if (data.results) {
-              setHistoryItems(data.results);
-            }
-            setLoading(false);
-          })
-          .catch(err => {
-            console.error("Failed to fetch history:", err);
-            setLoading(false);
-          });
-      } catch (e) {
-        console.error(e);
+    fetch("/api/results")
+      .then(res => res.json())
+      .then(data => {
+        if (data.results) {
+          setHistoryItems(data.results);
+        }
         setLoading(false);
-      }
-    } else {
-      setLoading(false);
-      setHistoryItems([]);
-    }
+      })
+      .catch(err => {
+        console.error("Failed to fetch history:", err);
+        setLoading(false);
+      });
   }, []);
 
   const handleViewResult = (item: ApiResult) => {
