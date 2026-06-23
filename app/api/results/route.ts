@@ -9,7 +9,13 @@ import { Result } from '@/models/Result';
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (e) {
+      return Response.json({ error: 'Invalid JSON payload' }, { status: 400 });
+    }
+
     const { email, resumeText, jobDescription, industry, rewrittenOutput } = body;
 
     if (rewrittenOutput === undefined) {
@@ -17,6 +23,14 @@ export async function POST(request: NextRequest) {
         { error: 'rewrittenOutput is required' },
         { status: 400 }
       );
+    }
+
+    if (resumeText && resumeText.length > 50000) {
+      return Response.json({ error: 'Resume text is too long (max 50,000 chars)' }, { status: 400 });
+    }
+
+    if (jobDescription && jobDescription.length > 50000) {
+      return Response.json({ error: 'Job description is too long (max 50,000 chars)' }, { status: 400 });
     }
 
     await connectDB();

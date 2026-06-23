@@ -19,11 +19,14 @@ interface ApiResult {
 export default function HistoryPage() {
   const [historyItems, setHistoryItems] = useState<ApiResult[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Load all history on mount
   useEffect(() => {
     fetch("/api/results")
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to load data");
+        return res.json();
+      })
       .then(data => {
         if (data.results) {
           setHistoryItems(data.results);
@@ -32,6 +35,7 @@ export default function HistoryPage() {
       })
       .catch(err => {
         console.error("Failed to fetch history:", err);
+        setError("Could not load history. Please try again later.");
         setLoading(false);
       });
   }, []);
@@ -60,6 +64,10 @@ export default function HistoryPage() {
 
           {loading ? (
              <p className="page-subtext" style={{ textAlign: "center", marginTop: "2rem" }}>Loading...</p>
+          ) : error ? (
+             <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm font-medium text-center mt-4">
+               {error}
+             </div>
           ) : historyItems.length > 0 ? (
             <div className="history-list">
               {historyItems.map((item) => (

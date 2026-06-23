@@ -35,6 +35,7 @@ export default function Home() {
   const [jobDescription, setJobDescription] = useState("");
   const [industry, setIndustry] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [animKey, setAnimKey] = useState(0);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,6 +47,7 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError(null);
     
     try {
       let resumeText = "";
@@ -78,9 +80,9 @@ export default function Home() {
       sessionStorage.setItem("rb_jobDescription", jobDescription);
       sessionStorage.setItem("rb_industry", industry);
       router.push("/result");
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong. Please try again.");
+    } catch (err: any) {
+      console.error("Submission error:", err);
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -184,6 +186,12 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {error && (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm font-medium text-center">
+            {error}
+          </div>
+        )}
 
         <button 
           type="submit" 
