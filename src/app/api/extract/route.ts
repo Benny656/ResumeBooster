@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-const pdfParse = require('pdf-parse');
+const PDFParser = require('pdf2json');
 import mammoth from 'mammoth';
 
 export async function POST(request: Request) {
@@ -17,8 +17,12 @@ export async function POST(request: Request) {
 
     if (fileName.endsWith('.pdf') || file.type === 'application/pdf') {
       try {
-        const data = await pdfParse(buffer);
-        text = data.text;
+        const pdfParser = new PDFParser(null, 1);
+        text = await new Promise((resolve, reject) => {
+          pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
+          pdfParser.on("pdfParser_dataReady", () => resolve(pdfParser.getRawTextContent()));
+          pdfParser.parseBuffer(buffer);
+        }) as string;
       } catch (err) {
         console.error("PDF Parsing Error:", err);
         return NextResponse.json({ error: 'Failed to parse PDF file.' }, { status: 500 });
