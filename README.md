@@ -1,23 +1,33 @@
 # Resume Booster
 
-Paste your resume and a job description. Get back a fully rewritten, job-tailored resume — spelling fixed, formatting cleaned, content aligned to the role.
+Resume Booster is an AI-powered resume optimization tool that helps job seekers tailor their resumes for specific roles. Paste your resume, job description, and industry, and the AI analyzes, improves, and rewrites your resume to better match the position.
 
-## What this is
+## What This Is
 
-Resume Booster is a simple web app for job seekers who don't want to spend hours manually rewriting their resume for every application. You paste your resume and the job description and industry, the AI rewrites the whole thing to match and gives you some suggestions, and you copy the result. That's it.
+Applying for jobs often means editing the same resume again and again. Resume Booster simplifies this process by comparing your resume with a job description, identifying gaps, and generating an improved version tailored to the role.
+
+## Features
+
+* Resume and job description analysis
+* Resume match score
+* Missing skills and keyword identification
+* AI-powered resume rewrite
+* Grammar and formatting improvements
+* Personalized improvement suggestions
+* Saved history of previous analyses
+* Email and Google authentication
 
 ## Screens
 
-1. **Input** — Paste resume + job description + industry, hit submit
-2. **Result** — View the AI-rewritten resume, copy to clipboard
-3. **History** — Browse past resume + job pairs and their outputs
-4. **Login** - Enter email or Google to login into the application and access your saved history 
+### Login
+### Dashboard
+### Analysis
+### Optimized Resume
+### History
+## AI Features
 
-## AI Feature
+## How to Use
 
-The model reads your resume and the job description together, then returns a full rewrite — corrected spelling, clean formatting, and content tailored to match the role.
-
-## How to Run
-1.Paste your resume,industry, and job description.
-2.Generate the resume and let the AI analyze the information.
-3.Review the rewritten resume, apply the suggestions, and copy the final version.
+1. Paste your resume, job description, and industry.
+2. Generate the analysis and review the AI insights.
+3. View the optimized resume, apply suggestions, and copy the final version.
