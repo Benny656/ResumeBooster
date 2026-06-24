@@ -55,7 +55,7 @@ export default function Login() {
                 <div className="w-full border-t border-black/10"></div>
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-[#FBF9F6] px-4 text-black/40 font-medium tracking-wider rounded-full">Or continue with</span>
+                <span className="bg-[#FBF9F6] px-4 text-black/70 font-medium tracking-wider rounded-full">Or continue with</span>
               </div>
             </div>
 
@@ -63,7 +63,7 @@ export default function Login() {
               <div className="space-y-2">
                 <label className="text-sm font-medium ml-1">Email</label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-black/40" size={18} />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-black/70" size={18} />
                   <input 
                     type="email" 
                     placeholder="name@company.com" 

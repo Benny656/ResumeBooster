@@ -27,7 +27,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
   const isDashboard = pathname?.includes('/dashboard') || pathname?.includes('/history');
 
   return (
-    <div className="min-h-screen bg-animated-cream text-[var(--color-brand-black)] flex flex-col font-body">
+    <div className="min-h-screen bg-animated-cream text-[var(--color-brand-black)] flex flex-col font-body overflow-x-hidden w-full">
       {/* Navigation */}
       <motion.header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${isScrolled ? 'py-4 glass-card' : 'py-6 bg-transparent'}`}
@@ -75,6 +75,8 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
           <button 
             className="md:hidden p-2 -mr-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            title={mobileMenuOpen ? "Close" : "Menu"}
           >
             {mobileMenuOpen ? <X /> : <Menu />}
           </button>
@@ -103,7 +105,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
               <>
                 <Link href="/dashboard">Dashboard</Link>
                 <Link href="/history">History</Link>
-                <Link href="/" className="text-black/50 mt-4 text-lg">Log Out</Link>
+                <Link href="/" className="text-black/70 mt-4 text-lg">Log Out</Link>
               </>
             )}
           </motion.div>
@@ -111,7 +113,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="flex-grow pt-24 pb-20">
+      <main className="flex-grow pt-24 pb-20 overflow-x-hidden w-full">
         <AnimatePresence mode="wait">
           <motion.div
             key={pathname}
@@ -134,7 +136,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
               <Briefcase size={16} />
               <span className="font-heading font-medium text-sm">Resume Booster &copy; 2026</span>
             </div>
-            <div className="flex gap-6 text-sm opacity-50">
+            <div className="flex gap-6 text-sm opacity-70">
               <a href="#" className="hover:opacity-100 transition-opacity">Privacy</a>
               <a href="#" className="hover:opacity-100 transition-opacity">Terms</a>
             </div>

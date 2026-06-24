@@ -20,11 +20,11 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
 
 export default function Landing() {
   return (
-    <div className="flex flex-col gap-32 md:gap-48 overflow-hidden">
+    <div className="flex flex-col gap-32 md:gap-48 overflow-x-hidden w-full">
       
       {/* Hero Section */}
       <section className="relative pt-12 md:pt-24 px-6 md:px-12 max-w-7xl mx-auto w-full">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
           <div className="flex flex-col gap-8 max-w-2xl relative z-10">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
@@ -56,10 +56,10 @@ export default function Landing() {
           </div>
           
           <motion.div 
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="relative h-[500px] md:h-[600px] w-full flex items-center justify-center perspective-[1000px]"
+            className="relative h-[400px] md:h-[600px] w-full flex items-center justify-center perspective-[1000px] overflow-hidden hidden md:flex"
           >
             <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-brand-red)] to-orange-400 rounded-3xl blur-[100px] opacity-20 transform scale-90"></div>
             
@@ -99,13 +99,13 @@ export default function Landing() {
               animate={{ y: -12 }}
               transition={{ duration: 4, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" }}
               style={{ willChange: 'transform' }}
-              className="absolute top-10 -left-4 md:-left-12 z-40 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-4"
+              className="absolute top-10 left-0 z-40 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-4"
             >
               <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                 <Target size={24} />
               </div>
               <div>
-                <div className="text-sm font-bold text-gray-400">Match Score</div>
+                <div className="text-sm font-bold text-gray-600">Match Score</div>
                 <div className="text-2xl font-heading font-bold text-green-600">94%</div>
               </div>
             </motion.div>
@@ -114,13 +114,13 @@ export default function Landing() {
               animate={{ y: 15 }}
               transition={{ duration: 5, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: 1 }}
               style={{ willChange: 'transform' }}
-              className="absolute bottom-20 -right-4 md:-right-12 z-40 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-4"
+              className="absolute bottom-20 right-0 z-40 bg-white p-4 rounded-2xl shadow-xl flex items-center gap-4"
             >
               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
                 <Sparkles size={24} />
               </div>
               <div>
-                <div className="text-sm font-bold text-gray-400">AI Analysis</div>
+                <div className="text-sm font-bold text-gray-600">AI Analysis</div>
                 <div className="text-lg font-heading font-bold text-blue-600">12 Suggestions</div>
               </div>
             </motion.div>
@@ -129,7 +129,7 @@ export default function Landing() {
               animate={{ y: -10 }}
               transition={{ duration: 4.5, repeat: Infinity, repeatType: "mirror", ease: "easeInOut", delay: 2 }}
               style={{ willChange: 'transform' }}
-              className="absolute top-48 -right-8 md:-right-16 z-40 bg-[var(--color-brand-black)] p-4 rounded-2xl shadow-xl flex items-center gap-4"
+              className="absolute top-48 right-0 z-40 bg-[var(--color-brand-black)] p-4 rounded-2xl shadow-xl flex items-center gap-4"
             >
               <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white">
                 <Download size={24} />
@@ -198,7 +198,7 @@ export default function Landing() {
                   { step: "05", title: "Improve Resume", desc: "Apply 1-click rewrites and download your new resume." }
                 ].map((item, idx) => (
                   <div key={idx} className="flex gap-6 group">
-                    <div className="text-3xl font-heading font-bold text-white/20 group-hover:text-[var(--color-brand-red)] transition-colors">
+                    <div className="text-3xl font-heading font-bold text-white/40 group-hover:text-[var(--color-brand-red)] transition-colors">
                       {item.step}
                     </div>
                     <div>

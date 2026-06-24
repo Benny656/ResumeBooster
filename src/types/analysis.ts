@@ -43,6 +43,7 @@ export interface AnalyzeRequest {
 
 /** Body returned by POST /api/analyze */
 export interface AnalyzeResponse {
+  id?: string;
   score: number;
   totalScore?: number;
   keywordScore?: number;

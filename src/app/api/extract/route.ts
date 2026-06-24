@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server';
-const PDFParser = require('pdf2json');
-import mammoth from 'mammoth';
 
 export async function POST(request: Request) {
   try {
@@ -17,7 +15,9 @@ export async function POST(request: Request) {
 
     if (fileName.endsWith('.pdf') || file.type === 'application/pdf') {
       try {
-        const pdfParser = new PDFParser(null, 1);
+        const PDFParserModule = await import('pdf2json');
+        const PDFParser = PDFParserModule.default || PDFParserModule;
+        const pdfParser = new PDFParser(null, true);
         text = await new Promise((resolve, reject) => {
           pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
           pdfParser.on("pdfParser_dataReady", () => resolve(pdfParser.getRawTextContent()));
@@ -32,6 +32,8 @@ export async function POST(request: Request) {
       file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     ) {
       try {
+        const mammothModule = await import('mammoth');
+        const mammoth = mammothModule.default || mammothModule;
         const result = await mammoth.extractRawText({ buffer });
         text = result.value;
       } catch (err) {

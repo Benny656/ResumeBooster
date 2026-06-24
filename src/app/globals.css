@@ -18,6 +18,11 @@
     --background: #F8F4EE;
     --foreground: #111111;
   }
+
+  html {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
   
   body {
     background-color: var(--background);
@@ -27,6 +32,13 @@
     -moz-osx-font-smoothing: grayscale;
     margin: 0;
     overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  img, video {
+    max-width: 100%;
+    height: auto;
   }
 
   h1, h2, h3, h4, h5, h6 {

@@ -83,7 +83,7 @@ export async function POST(
     await connectDB();
     console.log("STEP 6: MongoDB connected");
     console.log("STEP 7: Saving analysis");
-    await ResumeAnalysisModel.create({
+    const doc = await ResumeAnalysisModel.create({
       userId,
       ...analysisRequest,
       ...result,
@@ -98,6 +98,7 @@ export async function POST(
     // ── 5. Return response ──────────────────────────────────────────────────
     console.log("STEP 9: Returning response");
     const response: AnalyzeResponse = {
+      id: doc._id.toString(),
       score: totalScore,
       totalScore,
       keywordScore: result.keywordScore,
