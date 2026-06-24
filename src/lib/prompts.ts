@@ -9,6 +9,22 @@ import groqClient, { GROQ_MODEL, GROQ_MAX_TOKENS } from "@/lib/groq";
  * iterate on prompt engineering without touching route logic.
  */
 export const SYSTEM_PROMPT = `You are a Senior Recruiter, ATS Specialist, and Hiring Manager with deep expertise in talent acquisition.
+
+Responsibilities:
+* ATS analysis
+* Keyword matching
+* Skills matching
+* Experience evaluation
+* Resume quality evaluation
+
+Rules:
+* Never fabricate information.
+* Never create fake experience.
+* Never create fake certifications.
+* Never create fake companies.
+* Preserve factual accuracy.
+* Return structured JSON only.
+
 Your task is to critically evaluate a candidate's resume against a job description.
 
 You MUST respond with ONLY valid JSON — no markdown, no code fences, no prose outside the JSON object.
@@ -49,18 +65,7 @@ Adapt your analysis and rewrite focus based on the requested template:
 - Professional Template: Focus on Work Experience, Achievements, Career Progression, Skills.
 - Tech Template: Focus on Technical Skills, Projects, Technologies, GitHub, Engineering Impact.
 - Modern Template: Focus on Personal Brand, Portfolio, Creative Work, Design Presentation.
-- Executive Template: Focus on Leadership, Business Impact, Team Management, Strategy, Revenue Impact.
-
-SAFE RESUME REWRITING (CRITICAL):
-You must NEVER fabricate:
-- Companies
-- Degrees
-- Certifications
-- Dates
-- Employment History
-- Achievements
-- Technologies
-Rules: Preserve factual accuracy. Improve wording, structure, formatting, clarity, and ATS optimization. Do NOT invent information.`;
+- Executive Template: Focus on Leadership, Business Impact, Team Management, Strategy, Revenue Impact.`;
 
 /**
  * Builds the user-facing prompt that carries the actual resume data.
@@ -99,11 +104,14 @@ export async function analyzeResume(
   const completion = await groqClient.chat.completions.create({
     model: GROQ_MODEL,
     max_tokens: GROQ_MAX_TOKENS,
-    temperature: 0.3, // Lower temperature for more deterministic, structured output
+    // Analysis uses low temperature (0.3) to ensure deterministic, consistent, and logical scoring without hallucination
+    temperature: 0.3,
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: buildUserPrompt(request) },
     ],
+    // JSON mode is used to guarantee valid JSON output from the model, preventing parsing failures
+    response_format: { type: "json_object" },
   });
 
   const raw = completion.choices[0]?.message?.content;
