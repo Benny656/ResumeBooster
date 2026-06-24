@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { Briefcase, ChevronRight, Menu, X } from 'lucide-react';
+import { ChatWidget } from '@/components/chat/ChatWidget';
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -143,6 +144,8 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
           </div>
         </footer>
       )}
+
+      <ChatWidget />
     </div>
   );
 }
