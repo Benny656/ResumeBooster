@@ -3,71 +3,15 @@
 import React from 'react';
 import { Download } from 'lucide-react';
 import { toast } from 'sonner';
+import { generateAndDownloadPDF } from '@/lib/exports/pdf';
+import { generateAndDownloadDOCX } from '@/lib/exports/docx';
 
 export default function ExportActions({ analysisResult, template }: { analysisResult: any, template: string }) {
-  const wrapText = (text: string, maxWidth: number, font: any, fontSize: number) => {
-    const lines: string[] = [];
-    const paragraphs = text.split('\n');
-    
-    for (const paragraph of paragraphs) {
-      if (!paragraph.trim()) {
-        lines.push('');
-        continue;
-      }
-      const words = paragraph.split(' ');
-      let currentLine = words[0] || '';
-      
-      for (let i = 1; i < words.length; i++) {
-        const word = words[i];
-        const width = font.widthOfTextAtSize(currentLine + ' ' + word, fontSize);
-        if (width < maxWidth) {
-          currentLine += ' ' + word;
-        } else {
-          lines.push(currentLine);
-          currentLine = word;
-        }
-      }
-      lines.push(currentLine);
-    }
-    return lines;
-  };
 
   const exportPDF = async () => {
     if (!analysisResult?.rewrittenResume) return;
     try {
-      const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
-      const pdfDoc = await PDFDocument.create();
-      let page = pdfDoc.addPage([595.28, 841.89]);
-      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-      const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-      
-      const { width, height } = page.getSize();
-      const margin = 50;
-      let y = height - margin;
-      
-      page.drawText('Optimized Resume', { x: margin, y, size: 24, font: boldFont, color: rgb(0, 0, 0) });
-      y -= 40;
-      
-      const fontSize = 11;
-      const text = analysisResult.rewrittenResume;
-      const lines = wrapText(text, width - margin * 2, font, fontSize);
-      
-      for (const line of lines) {
-        if (y < margin) {
-          page = pdfDoc.addPage([595.28, 841.89]);
-          y = height - margin;
-        }
-        page.drawText(line, { x: margin, y, size: fontSize, font, color: rgb(0.1, 0.1, 0.1) });
-        y -= fontSize + 4;
-      }
-      
-      const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes as any], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'optimized-resume.pdf';
-      a.click();
+      await generateAndDownloadPDF(analysisResult.rewrittenResume);
     } catch (err) {
       toast.error('Failed to export PDF');
       console.error(err);
@@ -77,34 +21,7 @@ export default function ExportActions({ analysisResult, template }: { analysisRe
   const exportDOCX = async () => {
     if (!analysisResult?.rewrittenResume) return;
     try {
-      const { Document, Packer, Paragraph, TextRun } = await import('docx');
-      const text = analysisResult.rewrittenResume;
-      const paragraphs = text.split('\n').map((line: string) => {
-        return new Paragraph({
-          children: [new TextRun({ text: line, size: 22 })],
-          spacing: { after: 120 }
-        });
-      });
-
-      const doc = new Document({
-        sections: [{
-          properties: {},
-          children: [
-            new Paragraph({
-              children: [new TextRun({ text: 'Optimized Resume', bold: true, size: 32 })],
-              spacing: { after: 400 }
-            }),
-            ...paragraphs
-          ],
-        }]
-      });
-
-      const blob = await Packer.toBlob(doc);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'optimized-resume.docx';
-      a.click();
+      await generateAndDownloadDOCX(analysisResult.rewrittenResume);
     } catch (err) {
       toast.error('Failed to export DOCX');
       console.error(err);

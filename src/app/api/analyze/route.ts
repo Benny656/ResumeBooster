@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import connectDB from "@/lib/mongodb";
-import { analyzeResume } from "@/lib/prompts";
-import { GROQ_MODEL } from "@/lib/groq";
+import connectDB from "@/lib/database/mongodb";
+import { analyzeResume } from "@/lib/ai/prompts";
+import { GROQ_MODEL } from "@/config/ai";
 import ResumeAnalysisModel from "@/models/ResumeAnalysis";
-import type { AnalyzeRequest, AnalyzeResponse, ApiError } from "@/types/analysis";
+import type { AnalyzeRequest, AnalyzeResponse, ApiError } from "@/lib/ai/analysis";
 
 // ─── Runtime ───────────────────────────────────────────────────────────────────
 // Keep on Node.js runtime so Mongoose / native crypto work correctly.

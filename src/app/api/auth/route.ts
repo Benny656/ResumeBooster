@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { ApiError } from "@/types/analysis";
+import type { ApiError } from "@/lib/ai/analysis";
 
 // ─── Runtime ───────────────────────────────────────────────────────────────────
 export const runtime = "nodejs";

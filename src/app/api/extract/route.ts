@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { parsePDF } from '@/lib/parsing/pdf';
+import { parseDOCX } from '@/lib/parsing/docx';
 
 export async function POST(request: Request) {
   try {
@@ -15,14 +17,7 @@ export async function POST(request: Request) {
 
     if (fileName.endsWith('.pdf') || file.type === 'application/pdf') {
       try {
-        const PDFParserModule = await import('pdf2json');
-        const PDFParser = PDFParserModule.default || PDFParserModule;
-        const pdfParser = new PDFParser(null, true);
-        text = await new Promise((resolve, reject) => {
-          pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
-          pdfParser.on("pdfParser_dataReady", () => resolve(pdfParser.getRawTextContent()));
-          pdfParser.parseBuffer(buffer);
-        }) as string;
+        text = await parsePDF(buffer);
       } catch (err) {
         console.error("PDF Parsing Error:", err);
         return NextResponse.json({ error: 'Failed to parse PDF file.' }, { status: 500 });
@@ -32,10 +27,7 @@ export async function POST(request: Request) {
       file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     ) {
       try {
-        const mammothModule = await import('mammoth');
-        const mammoth = mammothModule.default || mammothModule;
-        const result = await mammoth.extractRawText({ buffer });
-        text = result.value;
+        text = await parseDOCX(buffer);
       } catch (err) {
         console.error("DOCX Parsing Error:", err);
         return NextResponse.json({ error: 'Failed to parse DOCX file.' }, { status: 500 });

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/mongodb";
+import connectDB from "@/lib/database/mongodb";
 import ResumeAnalysisModel from "@/models/ResumeAnalysis";
 
 export const runtime = "nodejs";

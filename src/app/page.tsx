@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, CheckCircle2, Sparkles, FileText, Target, Zap, RotateCcw, Clock, Download } from 'lucide-react';
 import Link from 'next/link';
-import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
+import { ImageWithFallback } from '@/components/shared/ImageWithFallback';
 
 const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
   <motion.div

@@ -1,5 +1,6 @@
-import type { AnalyzeRequest, GroqAnalysisResult } from "@/types/analysis";
-import groqClient, { GROQ_MODEL, GROQ_MAX_TOKENS } from "@/lib/groq";
+import type { AnalyzeRequest, GroqAnalysisResult } from "@/lib/ai/analysis";
+import groqClient from "@/lib/ai/groq";
+import { GROQ_MODEL, GROQ_MAX_TOKENS } from "@/config/ai";
 
 // ─── Prompt Builders ───────────────────────────────────────────────────────────
 

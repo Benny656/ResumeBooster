@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import groqClient, { GROQ_MODEL, GROQ_MAX_TOKENS } from '@/lib/groq';
+import groqClient from '@/lib/ai/groq';
+import { GROQ_MODEL, GROQ_MAX_TOKENS } from '@/config/ai';
 
 export async function POST(request: Request) {
   try {
