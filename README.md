@@ -31,13 +31,3 @@ Applying for jobs often means editing the same resume again and again. Resume Bo
 1. Paste your resume, job description, and industry.
 2. Generate the analysis and review the AI insights.
 3. View the optimized resume, apply suggestions, and copy the final version.
-
-AI Stack
-
-- Groq API
-- Model: openai/gpt-oss-120b
-- Environment Variable: GROQ_API_KEY
-
-AI Endpoints:
-- /api/analyze
-- /api/generate
