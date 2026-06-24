@@ -11,11 +11,22 @@ export interface IResumeAnalysis extends Document {
   template: string;
 
   score: number;
+  totalScore?: number;
+  keywordScore?: number;
+  skillsScore?: number;
+  experienceScore?: number;
+  structureScore?: number;
+
   strengths: string[];
   weaknesses: string[];
   missingSkills: string[];
+  requiredMissingSkills?: string[];
+  preferredMissingSkills?: string[];
   suggestions: string[];
   rewrittenResume: string;
+
+  modelUsed?: string;
+  promptVersion?: string;
 
   createdAt: Date;
 }
@@ -55,6 +66,11 @@ const ResumeAnalysisSchema = new Schema<IResumeAnalysis>(
       min: 0,
       max: 100,
     },
+    totalScore: { type: Number },
+    keywordScore: { type: Number },
+    skillsScore: { type: Number },
+    experienceScore: { type: Number },
+    structureScore: { type: Number },
     strengths: {
       type: [String],
       default: [],
@@ -67,6 +83,14 @@ const ResumeAnalysisSchema = new Schema<IResumeAnalysis>(
       type: [String],
       default: [],
     },
+    requiredMissingSkills: {
+      type: [String],
+      default: [],
+    },
+    preferredMissingSkills: {
+      type: [String],
+      default: [],
+    },
     suggestions: {
       type: [String],
       default: [],
@@ -75,6 +99,8 @@ const ResumeAnalysisSchema = new Schema<IResumeAnalysis>(
       type: String,
       required: true,
     },
+    modelUsed: { type: String },
+    promptVersion: { type: String },
   },
   {
     timestamps: { createdAt: true, updatedAt: false },

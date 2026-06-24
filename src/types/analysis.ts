@@ -11,11 +11,22 @@ export interface ResumeAnalysis {
   template: string;
 
   score: number;
+  totalScore?: number;
+  keywordScore?: number;
+  skillsScore?: number;
+  experienceScore?: number;
+  structureScore?: number;
+
   strengths: string[];
   weaknesses: string[];
   missingSkills: string[];
+  requiredMissingSkills?: string[];
+  preferredMissingSkills?: string[];
   suggestions: string[];
   rewrittenResume: string;
+
+  modelUsed?: string;
+  promptVersion?: string;
 
   createdAt: Date;
 }
@@ -33,9 +44,17 @@ export interface AnalyzeRequest {
 /** Body returned by POST /api/analyze */
 export interface AnalyzeResponse {
   score: number;
+  totalScore?: number;
+  keywordScore?: number;
+  skillsScore?: number;
+  experienceScore?: number;
+  structureScore?: number;
+
   strengths: string[];
   weaknesses: string[];
   missingSkills: string[];
+  requiredMissingSkills?: string[];
+  preferredMissingSkills?: string[];
   suggestions: string[];
   rewrittenResume: string;
 }
@@ -47,10 +66,15 @@ export interface AnalyzeResponse {
  * Validated at runtime before being persisted or returned to the client.
  */
 export interface GroqAnalysisResult {
-  score: number;
+  keywordScore: number;
+  skillsScore: number;
+  experienceScore: number;
+  structureScore: number;
+
   strengths: string[];
   weaknesses: string[];
-  missingSkills: string[];
+  requiredMissingSkills: string[];
+  preferredMissingSkills: string[];
   suggestions: string[];
   rewrittenResume: string;
 }

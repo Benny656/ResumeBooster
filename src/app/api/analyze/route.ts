@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import connectDB from "@/lib/mongodb";
 import { analyzeResume } from "@/lib/prompts";
+import { GROQ_MODEL } from "@/lib/groq";
 import ResumeAnalysisModel from "@/models/ResumeAnalysis";
 import type { AnalyzeRequest, AnalyzeResponse, ApiError } from "@/types/analysis";
 
@@ -66,7 +67,18 @@ export async function POST(
 
     console.log("STEP 4: AI analysis complete");
 
-    // ── 4. Persist to MongoDB ───────────────────────────────────────────────
+    // ── 4. Compute legacy values & total score ──────────────────────────────
+    const totalScore =
+      result.keywordScore +
+      result.skillsScore +
+      result.experienceScore +
+      result.structureScore;
+
+    const mergedMissingSkills = [
+      ...result.requiredMissingSkills,
+      ...result.preferredMissingSkills,
+    ];
+
     console.log("STEP 5: Connecting to MongoDB");
     await connectDB();
     console.log("STEP 6: MongoDB connected");
@@ -75,16 +87,28 @@ export async function POST(
       userId,
       ...analysisRequest,
       ...result,
+      totalScore,
+      score: totalScore,
+      missingSkills: mergedMissingSkills,
+      modelUsed: GROQ_MODEL,
+      promptVersion: "v2.0",
     });
     console.log("STEP 8: Analysis saved");
 
     // ── 5. Return response ──────────────────────────────────────────────────
     console.log("STEP 9: Returning response");
     const response: AnalyzeResponse = {
-      score: result.score,
+      score: totalScore,
+      totalScore,
+      keywordScore: result.keywordScore,
+      skillsScore: result.skillsScore,
+      experienceScore: result.experienceScore,
+      structureScore: result.structureScore,
       strengths: result.strengths,
       weaknesses: result.weaknesses,
-      missingSkills: result.missingSkills,
+      missingSkills: mergedMissingSkills,
+      requiredMissingSkills: result.requiredMissingSkills,
+      preferredMissingSkills: result.preferredMissingSkills,
       suggestions: result.suggestions,
       rewrittenResume: result.rewrittenResume,
     };

@@ -8,29 +8,59 @@ import groqClient, { GROQ_MODEL, GROQ_MAX_TOKENS } from "@/lib/groq";
  * contract it must honour.  Keeping this in a dedicated file makes it easy to
  * iterate on prompt engineering without touching route logic.
  */
-export const SYSTEM_PROMPT = `You are an expert resume coach and career advisor with deep knowledge of applicant tracking systems (ATS), hiring practices, and industry-specific requirements.
-
-Your task is to analyze a candidate's resume against a specific job description and provide structured, actionable feedback.
+export const SYSTEM_PROMPT = `You are a Senior Recruiter, ATS Specialist, and Hiring Manager with deep expertise in talent acquisition.
+Your task is to critically evaluate a candidate's resume against a job description.
 
 You MUST respond with ONLY valid JSON — no markdown, no code fences, no prose outside the JSON object.
 
 The JSON object must conform exactly to this schema:
 {
-  "score": <integer 0-100, ATS + job-fit match score>,
+  "keywordScore": <integer 0-40>,
+  "skillsScore": <integer 0-25>,
+  "experienceScore": <integer 0-20>,
+  "structureScore": <integer 0-15>,
   "strengths": [<string>, ...],
   "weaknesses": [<string>, ...],
-  "missingSkills": [<string>, ...],
+  "requiredMissingSkills": [<string>, ...],
+  "preferredMissingSkills": [<string>, ...],
   "suggestions": [<string>, ...],
   "rewrittenResume": "<full rewritten resume as a single string>"
 }
 
-Guidelines:
-- score: Holistic match score considering keywords, skills, experience, and formatting.
-- strengths: 3-6 specific things the resume does well for this role.
-- weaknesses: 3-6 specific gaps or problem areas.
-- missingSkills: Concrete skills or tools mentioned in the JD that are absent from the resume.
-- suggestions: 4-8 prioritised, actionable improvements the candidate can make immediately.
-- rewrittenResume: A polished, ATS-optimised version of the resume tailored to the job description and using the specified template style. Preserve factual accuracy — do NOT invent experience.`;
+EVALUATION CRITERIA:
+Evaluate ATS Compatibility, Keyword Alignment, Skill Match, Experience Relevance, Resume Structure, Industry Relevance, Missing Requirements, and Overall Competitiveness.
+
+SCORING RULES (Strict Weighted Scoring):
+- keywordScore (Max 40): Based on exact and semantic keyword alignment with the job description.
+- skillsScore (Max 25): Based on presence and context of required/preferred skills.
+- experienceScore (Max 20): Based on years of experience, relevance, and level of responsibility.
+- structureScore (Max 15): Based on readability, formatting, and ATS-friendly layout.
+
+ANALYSIS RULES:
+- strengths: Must be highly specific (e.g., "Strong Next.js project experience aligned with frontend development roles", NOT "Good experience").
+- weaknesses: Must be actionable (e.g., "Resume does not demonstrate Docker experience required by the job description", NOT "Missing skills").
+- requiredMissingSkills: Critical skills mentioned in the job description but absent from the resume.
+- preferredMissingSkills: "Nice to have" skills mentioned but absent.
+- suggestions: Provide highly practical improvements (e.g., "Add quantified achievements", "Include measurable project outcomes", "Add technologies mentioned in the job description").
+
+TEMPLATE-AWARE REWRITING:
+Adapt your analysis and rewrite focus based on the requested template:
+- Student Template: Focus on Education, Academic Projects, Certifications, Skills, Internships.
+- Professional Template: Focus on Work Experience, Achievements, Career Progression, Skills.
+- Tech Template: Focus on Technical Skills, Projects, Technologies, GitHub, Engineering Impact.
+- Modern Template: Focus on Personal Brand, Portfolio, Creative Work, Design Presentation.
+- Executive Template: Focus on Leadership, Business Impact, Team Management, Strategy, Revenue Impact.
+
+SAFE RESUME REWRITING (CRITICAL):
+You must NEVER fabricate:
+- Companies
+- Degrees
+- Certifications
+- Dates
+- Employment History
+- Achievements
+- Technologies
+Rules: Preserve factual accuracy. Improve wording, structure, formatting, clarity, and ATS optimization. Do NOT invent information.`;
 
 /**
  * Builds the user-facing prompt that carries the actual resume data.
@@ -118,7 +148,8 @@ function validateGroqResult(raw: unknown): GroqAnalysisResult {
   const requiredArrayFields = [
     "strengths",
     "weaknesses",
-    "missingSkills",
+    "requiredMissingSkills",
+    "preferredMissingSkills",
     "suggestions",
   ] as const;
 
@@ -128,8 +159,17 @@ function validateGroqResult(raw: unknown): GroqAnalysisResult {
     }
   }
 
-  if (typeof obj.score !== "number" || obj.score < 0 || obj.score > 100) {
-    throw new Error('Groq result "score" must be a number between 0 and 100.');
+  if (typeof obj.keywordScore !== "number" || obj.keywordScore < 0 || obj.keywordScore > 40) {
+    throw new Error('Groq result "keywordScore" must be a number between 0 and 40.');
+  }
+  if (typeof obj.skillsScore !== "number" || obj.skillsScore < 0 || obj.skillsScore > 25) {
+    throw new Error('Groq result "skillsScore" must be a number between 0 and 25.');
+  }
+  if (typeof obj.experienceScore !== "number" || obj.experienceScore < 0 || obj.experienceScore > 20) {
+    throw new Error('Groq result "experienceScore" must be a number between 0 and 20.');
+  }
+  if (typeof obj.structureScore !== "number" || obj.structureScore < 0 || obj.structureScore > 15) {
+    throw new Error('Groq result "structureScore" must be a number between 0 and 15.');
   }
 
   if (typeof obj.rewrittenResume !== "string" || !obj.rewrittenResume.trim()) {
@@ -137,10 +177,14 @@ function validateGroqResult(raw: unknown): GroqAnalysisResult {
   }
 
   return {
-    score: obj.score,
+    keywordScore: obj.keywordScore,
+    skillsScore: obj.skillsScore,
+    experienceScore: obj.experienceScore,
+    structureScore: obj.structureScore,
     strengths: obj.strengths as string[],
     weaknesses: obj.weaknesses as string[],
-    missingSkills: obj.missingSkills as string[],
+    requiredMissingSkills: obj.requiredMissingSkills as string[],
+    preferredMissingSkills: obj.preferredMissingSkills as string[],
     suggestions: obj.suggestions as string[],
     rewrittenResume: obj.rewrittenResume,
   };
