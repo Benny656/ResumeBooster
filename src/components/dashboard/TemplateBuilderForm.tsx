@@ -57,7 +57,7 @@ export default function TemplateBuilderForm({
                     type="text" 
                     value={(builderData as any)[field]}
                     onChange={(e) => setBuilderData({...builderData, [field]: e.target.value})}
-                    className="w-full bg-white border border-black/10 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-red)] text-sm"
+                    className="w-full min-w-0 bg-white border border-black/10 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-red)] text-sm"
                   />
                 </div>
               ))}
@@ -78,7 +78,7 @@ export default function TemplateBuilderForm({
                     rows={field.rows}
                     value={(builderData as any)[field.id]}
                     onChange={(e) => setBuilderData({...builderData, [field.id]: e.target.value})}
-                    className="w-full bg-white border border-black/10 rounded-xl p-4 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-red)] text-sm leading-relaxed"
+                    className="w-full min-w-0 bg-white border border-black/10 rounded-xl p-4 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-red)] text-sm leading-relaxed"
                   ></textarea>
                 </div>
               ))}
@@ -87,7 +87,7 @@ export default function TemplateBuilderForm({
             <button 
               onClick={handleGenerateDraft}
               disabled={isGeneratingDraft}
-              className="w-full mt-2 bg-[var(--color-brand-black)] text-white py-4 rounded-2xl font-bold text-base hover:bg-[var(--color-brand-red)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
+              className="w-full min-w-0 mt-2 bg-[var(--color-brand-black)] text-white py-4 rounded-2xl font-bold text-base hover:bg-[var(--color-brand-red)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
             >
               {isGeneratingDraft ? (
                 <><div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div> Generating...</>

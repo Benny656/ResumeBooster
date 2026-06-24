@@ -157,12 +157,12 @@ export default function Dashboard() {
       </section>
 
       {/* Main Grid */}
-      <div className="grid lg:grid-cols-12 gap-8">
+      <div className="grid lg:grid-cols-12 gap-8 w-full min-w-0">
         
         {/* Input Column */}
-        <div className="lg:col-span-12 flex flex-col gap-6">
+        <div className="lg:col-span-12 flex flex-col gap-6 w-full min-w-0">
           
-          <div className="glass-card p-6 md:p-8 rounded-3xl flex flex-col gap-6 relative overflow-hidden">
+          <div className="glass-card p-4 sm:p-6 md:p-8 rounded-3xl flex flex-col gap-6 relative overflow-hidden w-full min-w-0">
             {isAnalyzing && (
               <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center gap-4">
                 <div className="w-16 h-16 border-4 border-black/10 border-t-[var(--color-brand-red)] rounded-full animate-spin"></div>
@@ -177,7 +177,7 @@ export default function Dashboard() {
               
               {/* Upload Area */}
               {!uploadedFile ? (
-                <div className="border-2 border-dashed border-black/10 rounded-2xl p-8 flex flex-col items-center justify-center gap-3 bg-white/30 hover:bg-white/50 transition-colors relative">
+                <div className="border-2 border-dashed border-black/10 rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center gap-3 bg-white/30 hover:bg-white/50 transition-colors relative w-full text-center">
                   <input 
                     type="file" 
                     accept=".pdf,.docx,.txt"
@@ -203,9 +203,9 @@ export default function Dashboard() {
                   )}
                 </div>
               ) : (
-                <div className="bg-white/80 border border-green-500/30 rounded-xl p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                <div className="bg-white/80 border border-green-500/30 rounded-xl p-4 flex items-center justify-between w-full min-w-0 overflow-hidden">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 shrink-0">
                       <FileIcon size={20} />
                     </div>
                     <div>
@@ -222,7 +222,7 @@ export default function Dashboard() {
               <textarea 
                 value={resume}
                 onChange={(e) => setResume(e.target.value)}
-                className="w-full h-48 bg-white/50 border border-black/10 rounded-2xl p-5 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-red)] focus:bg-white transition-all text-sm leading-relaxed"
+                className="w-full min-w-0 h-48 bg-white/50 border border-black/10 rounded-2xl p-4 sm:p-5 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-red)] focus:bg-white transition-all text-sm leading-relaxed"
                 placeholder="Paste your resume text here, or generate a draft below..."
               ></textarea>
             </div>
@@ -236,13 +236,13 @@ export default function Dashboard() {
               <textarea 
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
-                className="w-full h-16 bg-white/50 border border-black/10 rounded-2xl p-5 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-red)] focus:bg-white transition-all text-sm leading-relaxed"
+                className="w-full min-w-0 h-24 bg-white/50 border border-black/10 rounded-2xl p-4 sm:p-5 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-red)] focus:bg-white transition-all text-sm leading-relaxed"
                 placeholder="Paste the job description here..."
               ></textarea>
             </div>
 
             {/* Resume Template Builder */}
-            <div className="flex flex-col gap-6 pt-4 border-t border-black/5">
+            <div className="flex flex-col gap-6 pt-4 border-t border-black/5 w-full min-w-0 overflow-hidden">
               <div className="flex items-end justify-between gap-4 mb-2">
                 <div className="flex flex-col gap-1">
                   <h3 className="font-heading font-bold text-xl">Don't have a resume? Start with a professional template.</h3>
@@ -278,9 +278,9 @@ export default function Dashboard() {
             <button 
               onClick={handleGenerate}
               disabled={isAnalyzing}
-              className="w-full mt-4 bg-[var(--color-brand-black)] text-white py-5 rounded-2xl font-bold text-lg hover:bg-[var(--color-brand-red)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2 shadow-xl shadow-black/10"
+              className="w-full min-w-0 mt-4 bg-[var(--color-brand-black)] text-white py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg hover:bg-[var(--color-brand-red)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2 shadow-xl shadow-black/10"
             >
-              <Sparkles size={20} /> Generate Analysis
+              <Sparkles size={20} className="shrink-0" /> <span className="truncate">Generate Analysis</span>
             </button>
 
           </div>

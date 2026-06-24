@@ -64,7 +64,7 @@ const ResumeCarousel = forwardRef<ResumeCarouselHandle, ResumeCarouselProps>(({
       onMouseLeave={() => setIsHoveringCarousel(false)}
       onTouchStart={() => setIsHoveringCarousel(true)}
       onTouchEnd={() => setIsHoveringCarousel(false)}
-      className="flex overflow-x-auto gap-4 md:gap-6 pb-4 scroll-smooth hide-scrollbar w-full" 
+      className="flex overflow-x-auto gap-4 md:gap-6 pb-4 scroll-smooth hide-scrollbar w-full min-w-0" 
       style={{ 
         scrollbarWidth: 'none', 
         msOverflowStyle: 'none',
