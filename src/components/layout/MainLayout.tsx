@@ -4,8 +4,10 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
+import { signOut } from 'next-auth/react';
 import { Briefcase, ChevronRight, Menu, X } from 'lucide-react';
 import { ChatWidget } from '@/components/chat/ChatWidget';
+import { NavbarAuth } from '@/components/layout/NavbarAuth';
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -50,26 +52,16 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
               <>
                 <a href="#features" className="hover:text-[var(--color-brand-red)] transition-colors">Features</a>
                 <a href="#how-it-works" className="hover:text-[var(--color-brand-red)] transition-colors">How it Works</a>
-                <Link href="/login" className="hover:text-[var(--color-brand-red)] transition-colors">Log In</Link>
-                <Link 
-                  href="/login" 
-                  className="bg-[var(--color-brand-black)] text-white px-6 py-2.5 rounded-full hover:bg-[var(--color-brand-red)] transition-colors flex items-center gap-2"
-                >
-                  Get Started
-                </Link>
               </>
             ) : (
               <>
                 <Link href="/dashboard" className={`hover:text-[var(--color-brand-red)] transition-colors ${pathname === '/dashboard' ? 'text-[var(--color-brand-red)]' : ''}`}>Dashboard</Link>
                 <Link href="/history" className={`hover:text-[var(--color-brand-red)] transition-colors ${pathname === '/history' ? 'text-[var(--color-brand-red)]' : ''}`}>History</Link>
                 <div className="w-px h-4 bg-black/10 mx-2"></div>
-                <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                  <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center font-heading font-bold text-xs">
-                    JD
-                  </div>
-                </button>
               </>
             )}
+            {/* Auth button / avatar — always visible, session-aware */}
+            <NavbarAuth />
           </nav>
 
           {/* Mobile Menu Toggle */}
@@ -97,16 +89,20 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
               <>
                 <a href="#features" onClick={() => setMobileMenuOpen(false)}>Features</a>
                 <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)}>How it Works</a>
-                <Link href="/login">Log In</Link>
-                <Link href="/login" className="text-[var(--color-brand-red)] mt-4 flex items-center gap-2">
-                  Get Started <ChevronRight size={24} />
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="text-[var(--color-brand-red)] mt-4 flex items-center gap-2">
+                  Sign In <ChevronRight size={24} />
                 </Link>
               </>
             ) : (
               <>
-                <Link href="/dashboard">Dashboard</Link>
-                <Link href="/history">History</Link>
-                <Link href="/" className="text-black/70 mt-4 text-lg">Log Out</Link>
+                <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
+                <Link href="/history" onClick={() => setMobileMenuOpen(false)}>History</Link>
+                <button
+                  onClick={() => { setMobileMenuOpen(false); signOut({ callbackUrl: '/' }); }}
+                  className="text-red-600 mt-4 text-lg text-left"
+                >
+                  Sign Out
+                </button>
               </>
             )}
           </motion.div>
