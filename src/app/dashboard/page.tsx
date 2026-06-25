@@ -110,13 +110,10 @@ export default function Dashboard() {
     setIsAnalyzing(true);
     
     try {
-      const userId = localStorage.getItem('resume_booster_user_id') || 'anonymous';
-      
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': userId
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           resume,

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/database/mongodb";
 import ResumeAnalysisModel from "@/models/ResumeAnalysis";
 import type { ApiError } from "@/lib/ai/analysis";
+import { auth } from "@/auth";
 
 // ─── Runtime ───────────────────────────────────────────────────────────────────
 export const runtime = "nodejs";
@@ -19,8 +20,8 @@ export async function GET(
 ): Promise<NextResponse> {
   try {
     // ── 1. Resolve userId ───────────────────────────────────────────────────
-    // TODO: Replace with real auth session lookup.
-    const userId = req.headers.get("x-user-id") ?? "anonymous";
+    const session = await auth();
+    const userId = session?.user?.id ?? "anonymous";
 
     // ── 2. Parse pagination params ──────────────────────────────────────────
     const { searchParams } = req.nextUrl;
@@ -81,8 +82,8 @@ export async function DELETE(
   req: NextRequest
 ): Promise<NextResponse> {
   try {
-    // ── 1. Resolve userId ───────────────────────────────────────────────────
-    const userId = req.headers.get("x-user-id") ?? "anonymous";
+    const session = await auth();
+    const userId = session?.user?.id ?? "anonymous";
 
     // ── 2. Validate id param ────────────────────────────────────────────────
     const id = req.nextUrl.searchParams.get("id");

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/database/mongodb";
 import ResumeAnalysisModel from "@/models/ResumeAnalysis";
+import { auth } from "@/auth";
 
 export const runtime = "nodejs";
 
@@ -9,7 +10,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = req.headers.get("x-user-id") ?? "anonymous";
+    const session = await auth();
+    const userId = session?.user?.id ?? "anonymous";
     const id = (await params).id;
 
     if (!id) {

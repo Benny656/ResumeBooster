@@ -22,11 +22,8 @@ export default function ResultsPage() {
     
     const fetchAnalysis = async () => {
       try {
-        const userId = localStorage.getItem('resume_booster_user_id') || 'anonymous';
         const res = await fetch(`/api/analyze/${id}`, {
-          headers: {
-            'x-user-id': userId
-          }
+          headers: {}
         });
         
         const data = await res.json();

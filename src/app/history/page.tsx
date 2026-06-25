@@ -18,11 +18,8 @@ export default function History() {
 
   const fetchHistory = async () => {
     try {
-      const userId = localStorage.getItem('resume_booster_user_id') || 'anonymous';
       const res = await fetch('/api/history', {
-        headers: {
-          'x-user-id': userId
-        }
+        headers: {}
       });
       if (!res.ok) throw new Error("Failed to load history");
       const data = await res.json();
@@ -38,12 +35,9 @@ export default function History() {
     if (!confirm("Are you sure you want to delete this analysis?")) return;
     
     try {
-      const userId = localStorage.getItem('resume_booster_user_id') || 'anonymous';
       const res = await fetch(`/api/history?id=${id}`, {
         method: 'DELETE',
-        headers: {
-          'x-user-id': userId
-        }
+        headers: {}
       });
       if (!res.ok) throw new Error("Failed to delete");
       

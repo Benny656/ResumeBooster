@@ -4,16 +4,21 @@ import React from 'react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { Briefcase, Mail } from 'lucide-react';
 
 export default function Login() {
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleGoogleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Save a mock user ID so our fetch calls can pass it in x-user-id header
-    localStorage.setItem('resume_booster_user_id', 'mock_user_' + Math.random().toString(36).substring(7));
-    router.push('/dashboard');
+    signIn('google', { callbackUrl: '/dashboard' });
+  };
+
+  const handleEmailLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Assuming you want to add email provider later
+    signIn('nodemailer', { callbackUrl: '/dashboard' });
   };
 
   return (
@@ -38,7 +43,7 @@ export default function Login() {
 
           <div className="w-full space-y-4">
             <button 
-              onClick={handleLogin}
+              onClick={handleGoogleLogin}
               className="w-full bg-white border border-black/10 text-[var(--color-brand-black)] px-6 py-4 rounded-xl font-medium flex items-center justify-center gap-3 hover:bg-black/5 transition-colors"
             >
               <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
@@ -59,7 +64,7 @@ export default function Login() {
               </div>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-4 text-left">
+            <form onSubmit={handleEmailLogin} className="space-y-4 text-left">
               <div className="space-y-2">
                 <label className="text-sm font-medium ml-1">Email</label>
                 <div className="relative">

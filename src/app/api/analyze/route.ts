@@ -5,6 +5,7 @@ import { analyzeResume } from "@/lib/ai/prompts";
 import { GROQ_MODEL } from "@/config/ai";
 import ResumeAnalysisModel from "@/models/ResumeAnalysis";
 import type { AnalyzeRequest, AnalyzeResponse, ApiError } from "@/lib/ai/analysis";
+import { auth } from "@/auth";
 
 // ─── Runtime ───────────────────────────────────────────────────────────────────
 // Keep on Node.js runtime so Mongoose / native crypto work correctly.
@@ -55,9 +56,8 @@ export async function POST(
     };
 
     // ── 2. Resolve userId ───────────────────────────────────────────────────
-    // TODO: Replace with real auth (e.g. NextAuth / Clerk session) once
-    //       the auth layer is wired up.
-    const userId = req.headers.get("x-user-id") ?? "anonymous";
+    const session = await auth();
+    const userId = session?.user?.id ?? "anonymous";
 
     console.log("STEP 2: Request validated");
 
