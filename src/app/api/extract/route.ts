@@ -8,7 +8,16 @@ export async function POST(request: Request) {
     const file = formData.get('file') as File;
 
     if (!file) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+      return NextResponse.json({ error: 'No file provided.' }, { status: 400 });
+    }
+
+    // Server-side file size guard (5 MB)
+    const FILE_MAX_BYTES = 5 * 1024 * 1024;
+    if (file.size > FILE_MAX_BYTES) {
+      return NextResponse.json(
+        { error: 'File is too large. Please upload a file under 5 MB.' },
+        { status: 400 }
+      );
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());

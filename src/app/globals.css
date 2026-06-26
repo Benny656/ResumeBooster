@@ -67,4 +67,21 @@
     border: 1px solid rgba(255, 255, 255, 0.4);
     box-shadow: 0 10px 40px -10px rgba(17, 17, 17, 0.04);
   }
+
+  /* Shimmer skeleton */
+  @keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position:  400px 0; }
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(17, 17, 17, 0.06) 25%,
+      rgba(17, 17, 17, 0.10) 37%,
+      rgba(17, 17, 17, 0.06) 63%
+    );
+    background-size: 800px 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
 }

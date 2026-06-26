@@ -48,6 +48,23 @@ export async function POST(
       );
     }
 
+    // ── Input length guardrails ─────────────────────────────────────────────
+    const RESUME_MAX = 15000;
+    const JD_MAX = 5000;
+
+    if ((resume?.length ?? 0) > RESUME_MAX) {
+      return NextResponse.json(
+        { error: `Resume is too long. Please keep it under ${RESUME_MAX.toLocaleString()} characters.` },
+        { status: 400 }
+      );
+    }
+    if ((jobDescription?.length ?? 0) > JD_MAX) {
+      return NextResponse.json(
+        { error: `Job description is too long. Please keep it under ${JD_MAX.toLocaleString()} characters.` },
+        { status: 400 }
+      );
+    }
+
     const analysisRequest: AnalyzeRequest = {
       resume: resume!.trim(),
       jobDescription: jobDescription!.trim(),
@@ -59,13 +76,8 @@ export async function POST(
     const session = await auth();
     const userId = session?.user?.id ?? "anonymous";
 
-    console.log("STEP 2: Request validated");
-
     // ── 3. Run AI analysis ──────────────────────────────────────────────────
-    console.log("STEP 3: Starting AI analysis");
     const result = await analyzeResume(analysisRequest);
-
-    console.log("STEP 4: AI analysis complete");
 
     // ── 4. Compute legacy values & total score ──────────────────────────────
     const totalScore =
@@ -79,10 +91,7 @@ export async function POST(
       ...result.preferredMissingSkills,
     ];
 
-    console.log("STEP 5: Connecting to MongoDB");
     await connectDB();
-    console.log("STEP 6: MongoDB connected");
-    console.log("STEP 7: Saving analysis");
     const doc = await ResumeAnalysisModel.create({
       userId,
       ...analysisRequest,
@@ -93,10 +102,8 @@ export async function POST(
       modelUsed: GROQ_MODEL,
       promptVersion: "v2.0",
     });
-    console.log("STEP 8: Analysis saved");
 
     // ── 5. Return response ──────────────────────────────────────────────────
-    console.log("STEP 9: Returning response");
     const response: AnalyzeResponse = {
       id: doc._id.toString(),
       score: totalScore,
@@ -116,15 +123,19 @@ export async function POST(
 
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    console.error("ANALYZE ERROR:", error);
+    console.error("[/api/analyze POST] Error:", error);
+
+    // Friendly rate-limit message
+    const msg = error instanceof Error ? error.message : "Unknown error";
+    const isRateLimit = msg.toLowerCase().includes("rate limit") || msg.toLowerCase().includes("429");
 
     return NextResponse.json(
       {
-        error: error instanceof Error
-          ? error.message
-          : "Unknown error",
+        error: isRateLimit
+          ? "Our AI service is currently busy. Please wait a moment and try again."
+          : msg,
       },
-      { status: 500 }
+      { status: isRateLimit ? 429 : 500 }
     );
   }
 }

@@ -23,10 +23,19 @@ export async function POST(req: Request) {
     
     // Support either a single message string or an array of messages for history
     const { message, messages: historyMessages } = body;
-    
+
     if (!message && (!historyMessages || historyMessages.length === 0)) {
       return NextResponse.json(
-        { error: 'Message is required' },
+        { error: 'Message is required.' },
+        { status: 400 }
+      );
+    }
+
+    // Message length guardrail
+    const MSG_MAX = 2000;
+    if (message && message.length > MSG_MAX) {
+      return NextResponse.json(
+        { error: `Message is too long. Please keep your message under ${MSG_MAX} characters.` },
         { status: 400 }
       );
     }
@@ -55,10 +64,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ response: responseContent });
 
   } catch (error: any) {
-    console.error('Chat API Error:', error);
+    console.error('[/api/chat POST] Error:', error);
+    const msg = error?.message ?? '';
+    const isRateLimit = msg.toLowerCase().includes('rate limit') || msg.toLowerCase().includes('429');
     return NextResponse.json(
-      { error: 'Failed to process chat request' },
-      { status: 500 }
+      { error: isRateLimit
+          ? 'Our AI assistant is currently busy. Please wait a moment and try again.'
+          : 'Failed to process your message. Please try again.' },
+      { status: isRateLimit ? 429 : 500 }
     );
   }
 }

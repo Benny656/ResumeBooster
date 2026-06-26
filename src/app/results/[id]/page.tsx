@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { Sparkles, Check, AlertCircle, TrendingUp, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import dynamic from 'next/dynamic';
+import { ErrorState } from '@/components/ui/ErrorState';
 
 const ExportActions = dynamic(() => import('@/components/dashboard/ExportActions'), { ssr: false });
 
@@ -13,50 +14,79 @@ export default function ResultsPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  
+
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
-    
+
     const fetchAnalysis = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const res = await fetch(`/api/analyze/${id}`, {
-          headers: {}
-        });
-        
+        const res = await fetch(`/api/analyze/${id}`);
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to load analysis');
-        
+        if (!res.ok) throw new Error(data.error || 'Failed to load analysis results.');
         setAnalysisResult(data.data);
       } catch (err: any) {
-        toast.error(err.message);
-        router.push('/dashboard');
+        const msg = err.message || 'An unexpected error occurred.';
+        setError(msg);
+        toast.error(msg);
       } finally {
         setLoading(false);
       }
     };
-    
-    fetchAnalysis();
-  }, [id, router]);
 
+    fetchAnalysis();
+  }, [id]);
+
+  // ── Loading ──────────────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-6 md:px-12 w-full pt-8 flex flex-col items-center justify-center min-h-[50vh]">
-        <div className="w-16 h-16 border-4 border-black/10 border-t-[var(--color-brand-red)] rounded-full animate-spin mb-4"></div>
+        <div className="w-16 h-16 border-4 border-black/10 border-t-[var(--color-brand-red)] rounded-full animate-spin mb-4" />
         <p className="font-heading font-bold text-lg animate-pulse">Loading analysis results...</p>
+        <p className="text-sm opacity-50 mt-2">This may take a moment.</p>
       </div>
     );
   }
 
-  if (!analysisResult) return null;
+  // ── Error ────────────────────────────────────────────────────────────────────
+  if (error || !analysisResult) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-12 w-full pt-8">
+        <ErrorState
+          title="Couldn't load this analysis"
+          message={error ?? "This analysis could not be found or may have been deleted."}
+          retryLabel="Try Again"
+          onRetry={() => {
+            setError(null);
+            setLoading(true);
+            // Re-trigger the effect by toggling a key — simplest approach without useReducer
+            fetch(`/api/analyze/${id}`)
+              .then(r => r.json())
+              .then(data => {
+                if (data.data) setAnalysisResult(data.data);
+                else setError(data.error || "Failed to reload.");
+              })
+              .catch(e => setError(e.message))
+              .finally(() => setLoading(false));
+          }}
+          backLabel="Back to Dashboard"
+          backHref="/dashboard"
+        />
+      </div>
+    );
+  }
 
+  // ── Success ──────────────────────────────────────────────────────────────────
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-12 w-full pt-8 pb-20 flex flex-col gap-8">
-      
+
       {/* Header Navigation */}
-      <button 
+      <button
         onClick={() => router.push('/dashboard')}
         className="flex items-center gap-2 text-sm font-bold opacity-70 hover:opacity-100 transition-opacity w-fit"
       >
@@ -64,7 +94,7 @@ export default function ResultsPage() {
       </button>
 
       {/* Score Card */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="glass-card p-6 md:p-8 rounded-3xl flex flex-col sm:flex-row items-center gap-6 bg-gradient-to-br from-white to-white/50 shadow-xl"
@@ -72,14 +102,14 @@ export default function ResultsPage() {
         <div className="relative w-32 h-32 flex-shrink-0">
           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-black/5" />
-            <motion.circle 
+            <motion.circle
               initial={{ strokeDashoffset: 251.2 }}
               animate={{ strokeDashoffset: 251.2 - (251.2 * analysisResult.score) / 100 }}
               transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
-              cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" 
-              strokeDasharray="251.2" 
+              cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" fill="transparent"
+              strokeDasharray="251.2"
               strokeLinecap="round"
-              className="text-green-500" 
+              className="text-green-500"
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -87,7 +117,7 @@ export default function ResultsPage() {
             <span className="text-xs font-bold uppercase opacity-70 mt-1">Match</span>
           </div>
         </div>
-        
+
         <div className="flex flex-col gap-2 text-center sm:text-left">
           <h3 className="text-2xl md:text-3xl font-heading font-bold">Analysis Complete</h3>
           <p className="opacity-70 text-base leading-relaxed">
@@ -98,9 +128,9 @@ export default function ResultsPage() {
 
       {/* Analysis Grid */}
       <div className="grid sm:grid-cols-2 gap-6">
-        
+
         {/* Strengths */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -120,7 +150,7 @@ export default function ResultsPage() {
         </motion.div>
 
         {/* Weaknesses */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -132,7 +162,7 @@ export default function ResultsPage() {
           <ul className="space-y-3">
             {analysisResult.weaknesses?.map((item: string, i: number) => (
               <li key={i} className="flex items-start gap-2 text-sm">
-                <div className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 flex-shrink-0"></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 flex-shrink-0" />
                 <span className="opacity-80">{item}</span>
               </li>
             ))}
@@ -140,14 +170,14 @@ export default function ResultsPage() {
         </motion.div>
 
         {/* Missing Skills */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           className="glass-card p-6 rounded-3xl md:col-span-2 flex flex-col gap-4"
         >
           <h4 className="font-heading font-bold flex items-center gap-2 text-lg">
-            <TrendingUp size={20} /> Missing Keywords & Skills
+            <TrendingUp size={20} /> Missing Keywords &amp; Skills
           </h4>
           <div className="flex flex-wrap gap-2">
             {analysisResult.missingSkills?.map((skill: string, i: number) => (
@@ -164,7 +194,7 @@ export default function ResultsPage() {
       </div>
 
       {/* Suggestions */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
@@ -185,7 +215,7 @@ export default function ResultsPage() {
         </div>
       </motion.div>
 
-      {/* Rewritten Preview Action Lazy Loaded */}
+      {/* Rewritten Preview — Lazy Loaded */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

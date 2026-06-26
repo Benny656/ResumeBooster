@@ -86,7 +86,14 @@ ${certifications || 'N/A'}`;
 
     return NextResponse.json({ resume: generatedResume.trim() });
   } catch (error: any) {
-    console.error("Resume Generation Error:", error);
-    return NextResponse.json({ error: 'An unexpected error occurred during generation.' }, { status: 500 });
+    console.error('[/api/generate POST] Error:', error);
+    const msg = error?.message ?? '';
+    const isRateLimit = msg.toLowerCase().includes('rate limit') || msg.toLowerCase().includes('429');
+    return NextResponse.json(
+      { error: isRateLimit
+          ? 'Our AI service is currently busy. Please wait a moment and try again.'
+          : 'An unexpected error occurred during generation.' },
+      { status: isRateLimit ? 429 : 500 }
+    );
   }
 }

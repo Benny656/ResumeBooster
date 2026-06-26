@@ -14,6 +14,10 @@ const TemplateBuilderForm = dynamic(() => import('@/components/dashboard/Templat
 export default function Dashboard() {
   const router = useRouter();
   
+  const RESUME_MAX = 15000;
+  const JD_MAX = 5000;
+  const FILE_MAX_MB = 5;
+
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [template, setTemplate] = useState('Modern');
   const [industry, setIndustry] = useState('Technology');
@@ -71,6 +75,13 @@ export default function Dashboard() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Client-side file size guard (5 MB)
+    if (file.size > FILE_MAX_MB * 1024 * 1024) {
+      toast.error(`File is too large. Please upload a file under ${FILE_MAX_MB} MB.`);
+      e.target.value = '';
+      return;
+    }
+
     setUploadedFile(file);
     setIsExtracting(true);
 
@@ -104,6 +115,16 @@ export default function Dashboard() {
   const handleGenerate = async () => {
     if (!resume.trim() || !jobDescription.trim()) {
       toast.error("Please provide both your resume and the job description.");
+      return;
+    }
+
+    // Client-side length guardrails
+    if (resume.length > RESUME_MAX) {
+      toast.error(`Your resume is too long (${resume.length.toLocaleString()} chars). Please trim it to under ${RESUME_MAX.toLocaleString()} characters (~10 pages) for best results.`);
+      return;
+    }
+    if (jobDescription.length > JD_MAX) {
+      toast.error(`The job description is too long (${jobDescription.length.toLocaleString()} chars). Please trim it to under ${JD_MAX.toLocaleString()} characters.`);
       return;
     }
 
@@ -216,12 +237,23 @@ export default function Dashboard() {
                 </div>
               )}
 
-              <textarea 
+              <textarea
                 value={resume}
                 onChange={(e) => setResume(e.target.value)}
-                className="w-full min-w-0 h-48 bg-white/50 border border-black/10 rounded-2xl p-4 sm:p-5 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-red)] focus:bg-white transition-all text-sm leading-relaxed"
+                className={`w-full min-w-0 h-48 bg-white/50 border rounded-2xl p-4 sm:p-5 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-red)] focus:bg-white transition-all text-sm leading-relaxed ${
+                  resume.length > RESUME_MAX ? 'border-red-400 focus:ring-red-400' : 'border-black/10'
+                }`}
                 placeholder="Paste your resume text here, or generate a draft below..."
-              ></textarea>
+              />
+              {/* Character count warning */}
+              {resume.length > RESUME_MAX * 0.85 && (
+                <p className={`text-xs font-medium mt-1 ${
+                  resume.length > RESUME_MAX ? 'text-red-500' : 'text-orange-500'
+                }`}>
+                  {resume.length.toLocaleString()} / {RESUME_MAX.toLocaleString()} characters
+                  {resume.length > RESUME_MAX && ' — Please shorten your resume before submitting.'}
+                </p>
+              )}
             </div>
 
 
@@ -230,12 +262,23 @@ export default function Dashboard() {
               <label className="font-heading font-bold text-lg flex items-center gap-2">
                 <Briefcase size={20} className="text-[var(--color-brand-red)]" /> Target Job Description
               </label>
-              <textarea 
+              <textarea
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
-                className="w-full min-w-0 h-24 bg-white/50 border border-black/10 rounded-2xl p-4 sm:p-5 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-red)] focus:bg-white transition-all text-sm leading-relaxed"
+                className={`w-full min-w-0 h-24 bg-white/50 border rounded-2xl p-4 sm:p-5 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-red)] focus:bg-white transition-all text-sm leading-relaxed ${
+                  jobDescription.length > JD_MAX ? 'border-red-400 focus:ring-red-400' : 'border-black/10'
+                }`}
                 placeholder="Paste the job description here..."
-              ></textarea>
+              />
+              {/* Character count warning */}
+              {jobDescription.length > JD_MAX * 0.85 && (
+                <p className={`text-xs font-medium mt-1 ${
+                  jobDescription.length > JD_MAX ? 'text-red-500' : 'text-orange-500'
+                }`}>
+                  {jobDescription.length.toLocaleString()} / {JD_MAX.toLocaleString()} characters
+                  {jobDescription.length > JD_MAX && ' — Please shorten the job description before submitting.'}
+                </p>
+              )}
             </div>
 
             {/* Resume Template Builder */}
