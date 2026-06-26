@@ -2,7 +2,7 @@
 
 > **AI-powered resume optimizer** — paste your resume and a job description, get a match score, targeted feedback, and a rewritten resume in seconds.
 
-🔗 **[Live Demo](https://your-live-demo-url.vercel.app)** &nbsp;|&nbsp; Built with Next.js, Groq AI, and MongoDB
+🔗 **[Live Demo](https://resume-booster-lemon.vercel.app/)** &nbsp;|&nbsp; Built with Next.js, Groq AI, and MongoDB
 
 ---
 
@@ -29,10 +29,10 @@ Most job seekers send the same resume to every role and wonder why they don't he
 
 ### Video Walkthrough
 
-<!-- Add your demo video here -->
-https://github.com/user-attachments/assets/placeholder-replace-with-github-video-url
 
-> 💡 _To embed the video: open this README on GitHub.com → Edit → drag `Resume Booster Demo.mp4` into the editor to get a hosted URL, then replace the line above._
+https://github.com/user-attachments/assets/cbee0f94-8d6a-44d2-81b3-a5aa3b45a0b5
+
+
 
 ### Screenshots
 
